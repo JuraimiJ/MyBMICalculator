@@ -1,5 +1,7 @@
 package sg.edu.rp.c346.mybmicalculator;
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -48,6 +50,20 @@ public class MainActivity extends AppCompatActivity {
 
                 tvDate.setText(String.format("Last Calculated Date: %s",datetime));
                 tvBMI.setText(String.format("Last Calculated BMI: %.3f",bmi));
+
+
+                // Step 1b: Obtain an instance of the SharedPreferences
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+
+                // Step 1c: Obtain an instance of the SharedPreference Editor for update later
+                SharedPreferences.Editor prefEdit = prefs.edit();
+
+                // Step 1d: Add the key-value pair
+                prefEdit.putString("date",datetime);
+                prefEdit.putFloat("bmi", bmi);
+
+                // Step 1e: Call commit() to save the changes into SharedPreferences
+                prefEdit.commit();
             }
         });
 
@@ -64,12 +80,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
+
+        // Step 2a: Obtain an instance of the SharedPreferences
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        // Step 2b: Retrieve the saved data from the SharedPreferences object
+        String dates = prefs.getString("date", "");
+        Float bmif = prefs.getFloat("bmi", 0.00f);
+
+        // Step 2c: Update the UI element with the value
+        tvDate.setText(String.format("Last Calculated Date: %s",dates));
+        tvBMI.setText(String.format("Last Calculated BMI: %.3f",bmif));
     }
 }
